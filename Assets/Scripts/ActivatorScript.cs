@@ -32,7 +32,7 @@ public class ActivatorScript : MonoBehaviour
         this.scoreText = GameObject.Find("Score").GetComponent<Text>();
         scoreText.text = "0";
 
-        InvokeRepeating("spawnNote", 0, 3);
+        InvokeRepeating("spawnNote", 0, 2);
     }
 
     // Update is called once per frame
@@ -61,7 +61,15 @@ public class ActivatorScript : MonoBehaviour
 
     private void spawnNote()
     {
-        caughtNotes.Add(Instantiate(note, note.transform.position, Quaternion.identity));
+        Color background = new Color(
+            Random.Range(0f, 1f),
+            Random.Range(0f, 1f),
+            Random.Range(0f, 1f),
+            0.2f
+        );
+        GameObject newNote = Instantiate(note, note.transform.position, Quaternion.identity);
+        newNote.GetComponent<SpriteRenderer>().color = background;
+        caughtNotes.Add(newNote);
     }
 
     private void handleKeyNotes()

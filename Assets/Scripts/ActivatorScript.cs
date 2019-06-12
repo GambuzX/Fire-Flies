@@ -26,6 +26,8 @@ public class ActivatorScript : MonoBehaviour
     private int currentNote = 0;
     private float initialTime;
 
+    public Color[] noteColors;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,8 +40,6 @@ public class ActivatorScript : MonoBehaviour
 
         this.scoreText = GameObject.Find("Score").GetComponent<Text>();
         scoreText.text = "0";
-
-        //InvokeRepeating("spawnNote", 0, 2);
 
         outerRingAnimator = GameObject.FindGameObjectWithTag("OuterRing").GetComponent<Animator>();
         musicAudio = GameObject.FindGameObjectWithTag("GameMusic").GetComponent<AudioSource>();
@@ -65,14 +65,8 @@ public class ActivatorScript : MonoBehaviour
 
     private void spawnNote()
     {
-        Color background = new Color(
-            Random.Range(0f, 1f),
-            Random.Range(0f, 1f),
-            Random.Range(0f, 1f),
-            0.2f
-        );
         GameObject newNote = Instantiate(note, note.transform.position, Quaternion.identity);
-        newNote.GetComponent<SpriteRenderer>().color = background;
+        newNote.GetComponent<SpriteRenderer>().color = noteColors[Random.Range(0, noteColors.Length)];
         caughtNotes.Add(newNote);
     }
 

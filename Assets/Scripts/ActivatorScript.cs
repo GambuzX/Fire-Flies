@@ -9,7 +9,7 @@ public class ActivatorScript : MonoBehaviour
     //GameObject note;
 
     private CircleCollider2D outerRing, middleRing, innerRing;
-    public float outerRingRadius, middleRingRadius, innerRingRadius;
+    private float outerRingRadius, middleRingRadius, innerRingRadius;
 
     private List<GameObject> caughtNotes = new List<GameObject>();
 
@@ -18,6 +18,7 @@ public class ActivatorScript : MonoBehaviour
     private int score = 0;
 
     private Text scoreText;
+    private Animator outerRingAnimator;
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +34,8 @@ public class ActivatorScript : MonoBehaviour
         scoreText.text = "0";
 
         InvokeRepeating("spawnNote", 0, 2);
+
+        outerRingAnimator = GameObject.FindGameObjectWithTag("OuterRing").GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -42,7 +45,6 @@ public class ActivatorScript : MonoBehaviour
         {
             handleKeyNotes();
         }
-        Debug.Log(score);
     }
     
     /*private void OnTriggerEnter2D(Collider2D col) {
@@ -82,11 +84,13 @@ public class ActivatorScript : MonoBehaviour
             }
             else if (inOuterZone(caughtNotes[i]))
             {
+                outerRingAnimator.SetTrigger("flash_white");
                 increaseScore(50);
                 removeNoteAt(i);
             }
             else if (inInnerZone(caughtNotes[i]))
             {
+                outerRingAnimator.SetTrigger("flash_yellow");
                 increaseScore(100);
                 removeNoteAt(i);
             }

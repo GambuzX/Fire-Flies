@@ -17,7 +17,7 @@ public class Note : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!flashed && this.transform.localScale.x == 0)
+        if (!flashed && this.transform.localScale.x < 0.7)
         {
             outerRingAnimator.SetTrigger("flash_red");
             flashed = true;

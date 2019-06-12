@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +20,11 @@ public class ActivatorScript : MonoBehaviour
 
     private Text scoreText;
     private Animator outerRingAnimator;
+    private AudioSource musicAudio;
+
+    private List<float> spawnTimes = new List<float>();
+    private int currentNote = 0;
+    private float initialTime;
 
     // Start is called before the first frame update
     void Start()
@@ -33,9 +39,13 @@ public class ActivatorScript : MonoBehaviour
         this.scoreText = GameObject.Find("Score").GetComponent<Text>();
         scoreText.text = "0";
 
-        InvokeRepeating("spawnNote", 0, 2);
+        //InvokeRepeating("spawnNote", 0, 2);
 
         outerRingAnimator = GameObject.FindGameObjectWithTag("OuterRing").GetComponent<Animator>();
+        musicAudio = GameObject.FindGameObjectWithTag("GameMusic").GetComponent<AudioSource>();
+
+        initialTime = Time.time;
+        readMusicTimes();
     }
 
     // Update is called once per frame
@@ -45,21 +55,13 @@ public class ActivatorScript : MonoBehaviour
         {
             handleKeyNotes();
         }
+
+        if (currentNote < spawnTimes.Count && Time.time - initialTime > spawnTimes[currentNote] - 2.5)
+        {
+            spawnNote();
+            currentNote++;
+        }
     }
-    
-    /*private void OnTriggerEnter2D(Collider2D col) {
-
-        //active = true;
-        if (col.gameObject.tag == "Note")
-            caughtNotes.Add(col.gameObject);
-        Debug.Log("hello");
-
-    }*/
-
-    /*private void OnTriggerExit2D(Collider2D col)
-    {
-        caughtNotes.Remove(col.gameObject);
-    }*/
 
     private void spawnNote()
     {
@@ -90,7 +92,7 @@ public class ActivatorScript : MonoBehaviour
             }
             else if (inInnerZone(caughtNotes[i]))
             {
-                outerRingAnimator.SetTrigger("flash_yellow");
+                outerRingAnimator.SetTrigger("flash_white");
                 increaseScore(100);
                 removeNoteAt(i);
             }
@@ -119,7 +121,18 @@ public class ActivatorScript : MonoBehaviour
         return (obj.transform.localScale.x < middleRingRadius && obj.transform.localScale.x > innerRingRadius);
     }
 
+    void readMusicTimes()
+    {
+        StreamReader inp_stm = new StreamReader("Assets/music_times.txt");
 
+        while (!inp_stm.EndOfStream)
+        {
+            string inp_ln = inp_stm.ReadLine();
+            spawnTimes.Add(float.Parse(inp_ln));
+        }
+
+        inp_stm.Close();
+    }
 
 }
 

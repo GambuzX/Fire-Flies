@@ -22,7 +22,7 @@ public class ChangeToGame : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(key))
+        if (Input.anyKeyDown)
         {
             SceneManager.LoadScene("Game");
 

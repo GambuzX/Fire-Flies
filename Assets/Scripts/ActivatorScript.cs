@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class ActivatorScript : MonoBehaviour
 {
@@ -27,6 +28,9 @@ public class ActivatorScript : MonoBehaviour
     private float initialTime;
 
     public Color[] noteColors;
+    private GameObject outerRingObj;
+
+    private bool notesLock = false;
 
     // Start is called before the first frame update
     void Start()
@@ -41,17 +45,22 @@ public class ActivatorScript : MonoBehaviour
         this.scoreText = GameObject.Find("Score").GetComponent<Text>();
         scoreText.text = "0";
 
+        outerRingObj = GameObject.FindGameObjectWithTag("OuterRing");
         outerRingAnimator = GameObject.FindGameObjectWithTag("OuterRing").GetComponent<Animator>();
         musicAudio = GameObject.FindGameObjectWithTag("GameMusic").GetComponent<AudioSource>();
 
         initialTime = Time.time;
         readMusicTimes();
+
+        playTransition(70);
+        playTransition(125);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!notesLock && Input.GetKeyDown(KeyCode.Space))
         {
             handleKeyNotes();
         }
@@ -70,8 +79,27 @@ public class ActivatorScript : MonoBehaviour
         caughtNotes.Add(newNote);
     }
 
+    private void playTransition(float time)
+    {
+        Invoke("startTransition", time);
+        Invoke("endTransition", time+15);
+    }
+
+    private void startTransition()
+    {
+        outerRingObj.GetComponent<SpriteRenderer>().enabled = false;
+        notesLock = true;
+    }
+
+    private void endTransition()
+    {
+        outerRingObj.GetComponent<SpriteRenderer>().enabled = true;
+        notesLock = false;
+    }
+
     private void handleKeyNotes()
     {
+        bool caught = false;
         for (int i = caughtNotes.Count-1; i >= 0; i--)
         {
             if (caughtNotes[i].transform.localScale.x == 0)
@@ -83,13 +111,20 @@ public class ActivatorScript : MonoBehaviour
                 outerRingAnimator.SetTrigger("flash_white");
                 increaseScore(50);
                 removeNoteAt(i);
+                caught = true;
             }
             else if (inInnerZone(caughtNotes[i]))
             {
                 outerRingAnimator.SetTrigger("flash_white");
                 increaseScore(100);
                 removeNoteAt(i);
+                caught = true;
             }
+        }
+        if(!caught)
+        {
+            outerRingAnimator.SetTrigger("flash_red");
+            increaseScore(-10);
         }
     }
 
@@ -97,6 +132,11 @@ public class ActivatorScript : MonoBehaviour
     {
         score += val;
         scoreText.text = "" + score;
+    }
+
+    public int getScore()
+    {
+        return score;
     }
 
     private void removeNoteAt(int index)

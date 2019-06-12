@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ChangeScene : MonoBehaviour { 
-public KeyCode key;
+public class ChangeScene : MonoBehaviour {
 
 
     public void changeToScene(int changeTheScene)
@@ -20,7 +19,7 @@ public KeyCode key;
 
     void Update()
     {
-        if (Input.GetKeyDown(key))
+        if (Input.anyKeyDown)
         {
             SceneManager.LoadScene("2ndScreen");
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ActivatorScript : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class ActivatorScript : MonoBehaviour
 
     public GameObject note;
 
+    private int score = 0;
+
+    private Text scoreText;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +29,10 @@ public class ActivatorScript : MonoBehaviour
         middleRingRadius = middleRing.radius*2;
         innerRingRadius = innerRing.radius*2;
 
-        caughtNotes.Add(Instantiate(note, note.transform.position, Quaternion.identity));
+        this.scoreText = GameObject.Find("Score").GetComponent<Text>();
+        scoreText.text = "0";
+
+        InvokeRepeating("spawnNote", 0, 3);
     }
 
     // Update is called once per frame
@@ -33,8 +41,8 @@ public class ActivatorScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             handleKeyNotes();
-            Debug.Log(caughtNotes.Count);
         }
+        Debug.Log(score);
     }
     
     /*private void OnTriggerEnter2D(Collider2D col) {
@@ -51,18 +59,42 @@ public class ActivatorScript : MonoBehaviour
         caughtNotes.Remove(col.gameObject);
     }*/
 
+    private void spawnNote()
+    {
+        caughtNotes.Add(Instantiate(note, note.transform.position, Quaternion.identity));
+    }
+
     private void handleKeyNotes()
     {
         for (int i = caughtNotes.Count-1; i >= 0; i--)
         {
             if (caughtNotes[i].transform.localScale.x == 0)
             {
-                Destroy(caughtNotes[i].gameObject);
-                caughtNotes.RemoveAt(i);
+                removeNoteAt(i);
             }
-            else if (inOuterZone(caughtNotes[i])) Debug.Log("outer zone");
-            else if (inInnerZone(caughtNotes[i])) Debug.Log("inner zone");
+            else if (inOuterZone(caughtNotes[i]))
+            {
+                increaseScore(50);
+                removeNoteAt(i);
+            }
+            else if (inInnerZone(caughtNotes[i]))
+            {
+                increaseScore(100);
+                removeNoteAt(i);
+            }
         }
+    }
+
+    private void increaseScore(int val)
+    {
+        score += val;
+        scoreText.text = "" + score;
+    }
+
+    private void removeNoteAt(int index)
+    {
+        Destroy(caughtNotes[index].gameObject);
+        caughtNotes.RemoveAt(index);
     }
 
     private bool inOuterZone(GameObject obj)

@@ -20,7 +20,7 @@ public class LevelController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - startTime > 220) SceneManager.LoadScene(0);
+        if (Time.time - startTime > 230) SceneManager.LoadScene(0);
 
         if (!ended && Time.time - startTime > endTime)
         {

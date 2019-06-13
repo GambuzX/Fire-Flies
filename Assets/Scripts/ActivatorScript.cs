@@ -52,8 +52,8 @@ public class ActivatorScript : MonoBehaviour
         initialTime = Time.time;
         readMusicTimes();
 
-        playTransition(70);
-        playTransition(125);
+        playTransition(69);
+        playTransition(124);
 
     }
 
@@ -82,7 +82,7 @@ public class ActivatorScript : MonoBehaviour
     private void playTransition(float time)
     {
         Invoke("startTransition", time);
-        Invoke("endTransition", time+15);
+        Invoke("endTransition", time+17);
     }
 
     private void startTransition()
@@ -115,7 +115,7 @@ public class ActivatorScript : MonoBehaviour
             }
             else if (inInnerZone(caughtNotes[i]))
             {
-                outerRingAnimator.SetTrigger("flash_white");
+                outerRingAnimator.SetTrigger("flash_yellow");
                 increaseScore(100);
                 removeNoteAt(i);
                 caught = true;
